@@ -1,0 +1,210 @@
+# Máquina de Turing reconocedora
+# Esta máquina de Turing reconoce palíndromos con el alfabeto {a, b}
+# 
+mt:
+  states: [q0, q1, q2, q3, q4, q5, qf]
+  input_alphabet: [a, b]
+  tape_alphabet: [a, b, _, X, Y]
+  initial_state: q0
+  accept_states: [qf]
+  
+  transitions:
+    - state: q0
+      read: [_]
+      write: [_]
+      move: R
+      next: qf
+    
+    - state: q0
+      read: [X]
+      write: [X]
+      move: R
+      next: q0
+    
+    - state: q0
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q0
+    
+    - state: q0
+      read: [a]
+      write: [X]
+      move: R
+      next: q1
+    
+    - state: q0
+      read: [b]
+      write: [Y]
+      move: R
+      next: q2
+    
+    - state: q1
+      read: [a]
+      write: [a]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [b]
+      write: [b]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [X]
+      write: [X]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [_]
+      write: [_]
+      move: L
+      next: q3
+    
+    - state: q2
+      read: [a]
+      write: [a]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [b]
+      write: [b]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [X]
+      write: [X]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [_]
+      write: [_]
+      move: L
+      next: q4
+    
+    - state: q3
+      read: [a]
+      write: [X]
+      move: L
+      next: q5
+    
+    - state: q3
+      read: [X]
+      write: [X]
+      move: R
+      next: qf
+    
+    - state: q3
+      read: [Y]
+      write: [Y]
+      move: R
+      next: qf
+    
+    - state: q4
+      read: [b]
+      write: [Y]
+      move: L
+      next: q5
+    
+    - state: q4
+      read: [X]
+      write: [X]
+      move: R
+      next: qf
+    
+    - state: q4
+      read: [Y]
+      write: [Y]
+      move: R
+      next: qf
+    
+    - state: q5
+      read: [a]
+      write: [a]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [b]
+      write: [b]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [X]
+      write: [X]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [Y]
+      write: [Y]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [_]
+      write: [_]
+      move: R
+      next: q0
+    
+    - state: q_siguiente
+      read: [X]
+      write: [X]
+      move: R
+      next: q_siguiente
+    
+    - state: q_siguiente
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q_siguiente
+    
+    - state: q_siguiente
+      read: [a]
+      write: [X]
+      move: R
+      next: q1
+    
+    - state: q_siguiente
+      read: [b]
+      write: [Y]
+      move: R
+      next: q2
+    
+    - state: q_siguiente
+      read: [_]
+      write: [_]
+      move: R
+      next: qf
+
+# Entradas de prueba
+inputs:
+
+  - "abbbba" 
+  - "aabbaa"      
+  - "abbaabba"
+  - "bab"
+  - "babab"
+  - "ababa"       
+  - "aababb"      
+  - "aaaaaaaab"
+  - "abababababab"
+  - "bababababbbbbbbaaaa"
