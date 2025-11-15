@@ -1,0 +1,196 @@
+# Máquina de Turing alteradora
+# Esta máquina de Turing duplica una cadena con el alfabeto {a, b}
+# Ejemplo: "ab" -> "abab", "aaa" -> "aaaaaa"
+
+mt:
+  states: [q0, q1, q2, q3, q4, q5, qf]
+  input_alphabet: [a, b]
+  tape_alphabet: [a, b, _, X, Y]
+  initial_state: q0
+  accept_states: [qf]
+  
+  transitions:
+    # q0: Estado inicial - marcar el primer símbolo
+    - state: q0
+      read: [_]
+      write: [_]
+      move: R
+      next: qf
+    
+    - state: q0
+      read: [a]
+      write: [X]
+      move: R
+      next: q1
+    
+    - state: q0
+      read: [b]
+      write: [Y]
+      move: R
+      next: q2
+    
+    # q1: Copiar 'a' - ir al final de la cadena
+    - state: q1
+      read: [a]
+      write: [a]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [b]
+      write: [b]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [X]
+      write: [X]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q1
+    
+    - state: q1
+      read: [_]
+      write: [a]
+      move: L
+      next: q3
+    
+    # q2: Copiar 'b' - ir al final de la cadena
+    - state: q2
+      read: [a]
+      write: [a]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [b]
+      write: [b]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [X]
+      write: [X]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [_]
+      write: [b]
+      move: L
+      next: q3
+    
+    # q3: Regresar al inicio
+    - state: q3
+      read: [a]
+      write: [a]
+      move: L
+      next: q3
+    
+    - state: q3
+      read: [b]
+      write: [b]
+      move: L
+      next: q3
+    
+    - state: q3
+      read: [X]
+      write: [X]
+      move: L
+      next: q3
+    
+    - state: q3
+      read: [Y]
+      write: [Y]
+      move: L
+      next: q3
+    
+    - state: q3
+      read: [_]
+      write: [_]
+      move: R
+      next: q4
+    
+    # q4: Buscar siguiente símbolo sin marcar
+    - state: q4
+      read: [X]
+      write: [X]
+      move: R
+      next: q4
+    
+    - state: q4
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q4
+    
+    - state: q4
+      read: [a]
+      write: [X]
+      move: R
+      next: q1
+    
+    - state: q4
+      read: [b]
+      write: [Y]
+      move: R
+      next: q2
+    
+    - state: q4
+      read: [_]
+      write: [_]
+      move: R
+      next: q5
+    
+    # q5: Restaurar marcas X e Y a símbolos originales
+    - state: q5
+      read: [X]
+      write: [a]
+      move: R
+      next: q5
+    
+    - state: q5
+      read: [Y]
+      write: [b]
+      move: R
+      next: q5
+    
+    - state: q5
+      read: [a]
+      write: [a]
+      move: R
+      next: q5
+    
+    - state: q5
+      read: [b]
+      write: [b]
+      move: R
+      next: q5
+    
+    - state: q5
+      read: [_]
+      write: [_]
+      move: R
+      next: qf
+
+# Entradas de prueba
+inputs:
+  - "aabba"      
+  - "bbbaa"      
+  - "ababa"      
+  - "aaaaa"      
+  - "bbbbb"      
+  - "ababab"     
+  - "aabbaa"
+  - "abbaab"
