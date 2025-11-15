@@ -1,6 +1,5 @@
-# Máquina de Turing alteradora
-# Esta máquina de Turing duplica una cadena con el alfabeto {a, b}
-# Ejemplo: "ab" -> "abab", "aaa" -> "aaaaaa"
+# Máquina de Turing reconocedora CORREGIDA
+# Esta máquina de Turing reconoce palíndromos con el alfabeto {a, b}
 
 mt:
   states: [q0, q1, q2, q3, q4, q5, qf]
@@ -10,7 +9,7 @@ mt:
   accept_states: [qf]
   
   transitions:
-    # q0: Estado inicial - marcar el primer símbolo
+    # q0: Estado inicial - revisar si la cinta está vacía o buscar el primer símbolo
     - state: q0
       read: [_]
       write: [_]
@@ -18,6 +17,18 @@ mt:
       next: qf
     
     - state: q0
+      read: [X]
+      write: [X]
+      move: R
+      next: q0
+    
+    - state: q0
+      read: [Y]
+      write: [Y]
+      move: R
+      next: q0
+    
+    - state: q0
       read: [a]
       write: [X]
       move: R
@@ -29,7 +40,7 @@ mt:
       move: R
       next: q2
     
-    # q1: Copiar 'a' - ir al final de la cadena
+    # q1: Marcamos 'a' al inicio, ahora vamos al final para verificar 'a'
     - state: q1
       read: [a]
       write: [a]
@@ -55,142 +66,133 @@ mt:
       next: q1
     
     - state: q1
-      read: [_]
-      write: [a]
-      move: L
-      next: q3
-    
-    # q2: Copiar 'b' - ir al final de la cadena
-    - state: q2
-      read: [a]
-      write: [a]
-      move: R
-      next: q2
-    
-    - state: q2
-      read: [b]
-      write: [b]
-      move: R
-      next: q2
-    
-    - state: q2
-      read: [X]
-      write: [X]
-      move: R
-      next: q2
-    
-    - state: q2
-      read: [Y]
-      write: [Y]
-      move: R
-      next: q2
-    
-    - state: q2
-      read: [_]
-      write: [b]
-      move: L
-      next: q3
-    
-    # q3: Regresar al inicio
-    - state: q3
-      read: [a]
-      write: [a]
-      move: L
-      next: q3
-    
-    - state: q3
-      read: [b]
-      write: [b]
-      move: L
-      next: q3
-    
-    - state: q3
-      read: [X]
-      write: [X]
-      move: L
-      next: q3
-    
-    - state: q3
-      read: [Y]
-      write: [Y]
-      move: L
-      next: q3
-    
-    - state: q3
       read: [_]
       write: [_]
-      move: R
-      next: q4
+      move: L
+      next: q3
     
-    # q4: Buscar siguiente símbolo sin marcar
-    - state: q4
+    # q2: Marcamos 'b' al inicio, ahora vamos al final para verificar 'b'
+    - state: q2
+      read: [a]
+      write: [a]
+      move: R
+      next: q2
+    
+    - state: q2
+      read: [b]
+      write: [b]
+      move: R
+      next: q2
+    
+    - state: q2
       read: [X]
       write: [X]
       move: R
-      next: q4
+      next: q2
     
-    - state: q4
+    - state: q2
       read: [Y]
-      write: [Y]
-      move: R
-      next: q4
-    
-    - state: q4
-      read: [a]
-      write: [X]
-      move: R
-      next: q1
-    
-    - state: q4
-      read: [b]
       write: [Y]
       move: R
       next: q2
     
-    - state: q4
+    - state: q2
       read: [_]
       write: [_]
-      move: R
-      next: q5
+      move: L
+      next: q4
     
-    # q5: Restaurar marcas X e Y a símbolos originales
-    - state: q5
-      read: [X]
-      write: [a]
-      move: R
-      next: q5
-    
-    - state: q5
-      read: [Y]
-      write: [b]
-      move: R
-      next: q5
-    
-    - state: q5
+    # q3: Esperamos encontrar 'a' al final (correspondiente a la 'a' del inicio)
+    - state: q3
       read: [a]
-      write: [a]
-      move: R
+      write: [X]
+      move: L
       next: q5
     
-    - state: q5
-      read: [b]
-      write: [b]
-      move: R
-      next: q5
-    
-    - state: q5
-      read: [_]
-      write: [_]
+    # Si encontramos X o Y, significa que ya procesamos toda la cadena
+    - state: q3
+      read: [X]
+      write: [X]
       move: R
       next: qf
+    
+    - state: q3
+      read: [Y]
+      write: [Y]
+      move: R
+      next: qf
+    
+    # IMPORTANTE: Si encuentra 'b' cuando esperaba 'a', RECHAZA (no hay transición)
+    
+    # q4: Esperamos encontrar 'b' al final (correspondiente a la 'b' del inicio)
+    - state: q4
+      read: [b]
+      write: [Y]
+      move: L
+      next: q5
+    
+    # Si encontramos X o Y, significa que ya procesamos toda la cadena
+    - state: q4
+      read: [X]
+      write: [X]
+      move: R
+      next: qf
+    
+    - state: q4
+      read: [Y]
+      write: [Y]
+      move: R
+      next: qf
+    
+    # IMPORTANTE: Si encuentra 'a' cuando esperaba 'b', RECHAZA (no hay transición)
+    
+    # q5: Regresar al inicio de la cadena
+    - state: q5
+      read: [a]
+      write: [a]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [b]
+      write: [b]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [X]
+      write: [X]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [Y]
+      write: [Y]
+      move: L
+      next: q5
+    
+    - state: q5
+      read: [_]
+      write: [_]
+      move: R
+      next: q0
 
-# Entradas de prueba
+# Entradas de prueba según los requisitos del proyecto
 inputs:
-  - "aabba"      
-  - "bbbaa"      
-  - "ababa"      
-  - "aaaaa"      
-  - "bbbbb"      
-  - "ababab"     
-  - "aabbaa"
-  - "abbaab"
+  # Cadenas ACEPTADAS (palíndromos con longitud >= 5)
+  - "abbbba"      # Palíndromo simétrico - longitud 6
+  - "aabbaa"      # Palíndromo con pares - longitud 6
+  - "ababa"       # Palíndromo impar - longitud 5
+  - "baaaab"      # Palíndromo simétrico - longitud 6
+  
+  # Cadenas RECHAZADAS (no palíndromos con longitud >= 5)
+  - "aababb"      # No es palíndromo - longitud 6
+  - "aaaaaaaab"   # Casi todas 'a' pero termina en 'b' - longitud 9
+  - "abababab"    # Patrón alternado, no palíndromo - longitud 8
+  - "bbbbbba"     # Casi todas 'b' pero termina en 'a' - longitud 7
+  
+  # Casos adicionales interesantes
+  - "aaaaa"       # Todas iguales (palíndromo) - longitud 5
+  - "bbbbb"       # Todas iguales (palíndromo) - longitud 5
+  - "abababa"     # Palíndromo impar - longitud 7
+  - "abbaab"      # No palíndromo - longitud 6
