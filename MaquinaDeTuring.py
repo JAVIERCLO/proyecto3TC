@@ -62,30 +62,32 @@ class MaquinaDeTuring:
     def ejecutar(self, entrada: str, max_pasos: int = 1000) -> Tuple[bool, List[str]]:
         self.iniciar_cinta(entrada)
         ids = []
-        
         # Agregar ID inicial
         ids.append(self.obtener_descripcion_instantanea())
-        
+
         pasos = 0
+        seen = set()
+        seen.add(ids[0])
+
         while pasos < max_pasos:
             # Verificar si estamos en estado de aceptación
             if self.estado_actual in self.estados_aceptacion:
                 return True, ids
-            
+
             # Leer símbolo actual
             simbolo_actual = self.cinta[self.cabezal] if self.cabezal < len(self.cinta) else '_'
-            
+
             # Buscar transición
             transicion = self.obtener_transicion(self.estado_actual, simbolo_actual)
-            
+
             if transicion is None:
                 # rechazar si no hay transición válida
                 return False, ids
-            
+
             # Aplicar transición y escribir en la cinta
             write_symbols = transicion['write'] if isinstance(transicion['write'], list) else [transicion['write']]
             self.cinta[self.cabezal] = write_symbols[0]
-            
+
             # Mover cabezal
             movimiento = transicion['move']
             if movimiento == 'R':
@@ -95,16 +97,24 @@ class MaquinaDeTuring:
                     self.cinta.extend(['_'] * 50)
             elif movimiento == 'L':
                 self.cabezal = max(0, self.cabezal - 1)
-            
+
             # Cambiar estado
             self.estado_actual = transicion['next']
-            
-            # Agregar nueva descripción instantánea
-            ids.append(self.obtener_descripcion_instantanea())
-            
+
+            # Agregar nueva descripción instantánea y detectar bucles
+            id_str = self.obtener_descripcion_instantanea()
+            if id_str in seen:
+                # Bucle detectado: devolver rechazado y registros hasta el momento
+                print(f"⚠️ Bucle detectado en paso {pasos+1}: estado={self.estado_actual}, cabezal={self.cabezal}")
+                return False, ids
+
+            ids.append(id_str)
+            seen.add(id_str)
+
             pasos += 1
-        
-        # Seguro anti bucle infinito
+
+        # Límite de pasos alcanzado
+        print(f"⚠️ Límite de pasos alcanzado ({max_pasos}). La MT no terminó en ese número de pasos.")
         return False, ids
 
 
