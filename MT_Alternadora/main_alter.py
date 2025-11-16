@@ -3,12 +3,10 @@ import sys
 import os
 from pathlib import Path
 
-# Agregar el directorio padre al path para importar MaquinaDeTuring
+# Importar MaquinaDeTuring
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from MaquinaDeTuring import ejecutar_simulacion
-
-# Usar ruta absoluta relativa al archivo para que funcione desde cualquier cwd
 archivo = str(Path(__file__).parent / "config_mt_alter.yaml")
 
 def main():
